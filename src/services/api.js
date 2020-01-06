@@ -41,7 +41,7 @@ export async function queryLqyjList(params) {
 }
 // get请求
 export async function select30DaysNumber(days) {
-  return request(`http://127.0.0.1:10086/index/select30DaysNumber`);
+  return request(`http://127.0.0.1:10086/index/select30DaysNumber?days=`+days);
 }
 // 总访问量
 export async function selectZoneNumber() {

@@ -11,7 +11,8 @@ export default {
       list: [],
       pagination: {},
     },
-    visitNumber:[],
+    visitNumberList:[],
+    ZoneVisitNumber:null,
   },
 
   effects: {
@@ -41,7 +42,7 @@ export default {
     *selectZoneNumber({ payload }, { call, put }) {
       const response = yield call(selectZoneNumber, payload);
       yield put({
-        type: 'save1',
+        type: 'save2',
         payload: response,
       });
     },
@@ -82,7 +83,13 @@ export default {
     save1(state, action) {
       return {
         ...state,
-        visitNumber: action.payload,
+        visitNumberList: action.payload,
+      };
+    },
+    save2(state, action) {
+      return {
+        ...state,
+        ZoneVisitNumber: action.payload,
       };
     },
   },

@@ -1,7 +1,7 @@
 import React, {PureComponent,} from 'react';
 import {connect} from 'dva';
 import moment from 'moment';
-import {Card, Form, message,} from 'antd';
+import {Card, Form, message, InputNumber,} from 'antd';
 import styles from './IndexDaynumber.less';
 import G2 from '@antv/g2';
 // import G2 from '@antv/g2/build/g2';
@@ -11,6 +11,8 @@ import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 @connect(({rule, loading}) => ({
   rule,
   loading: loading.models.rule,
+  visitNumberList: rule.visitNumberList,
+  ZoneVisitNumber: rule.ZoneVisitNumber,
 }))
 class ShowNumberBox extends PureComponent {
   constructor(props) {
@@ -22,18 +24,27 @@ class ShowNumberBox extends PureComponent {
       dayNumberList: [],
       ZoneNumber: null,
       numberChart: null,
+      days: 30,
     };
   }
 
   componentWillUnmount() {
     console.log("页面渲染前调用")
-
   }
 
+  //页面渲染后调用
   componentDidMount() {
-    selectZoneNumber().then(x => this.setState({ZoneNumber: x}));
-    select30DaysNumber().then(x => this.setState({dayNumberList: x}));
-    // this.tableMake();
+    selectZoneNumber().then(x => {
+      // 查询总访问量
+      this.setState({ZoneNumber: x})
+    });
+
+    // 查询 state。days 天数内的访问量列表 更新state 构造图表
+    select30DaysNumber(this.state.days).then(x => {
+      this.setState({dayNumberList: x});
+      // 构造图表
+      this.tableMake();
+    });
 
     // const {dispatch} = this.props;
     // dispatch({
@@ -42,8 +53,24 @@ class ShowNumberBox extends PureComponent {
     // });
   }
 
+  //当输入框值改变时调用
+  inputchanger() {
+    // 从输入框获取 days
+    let days = document.getElementsByName("days")[0].value;
+    console.log(days);
+    this.setState({days: days});
+    // 查询 state.days 天数内的访问量列表 更新state 构造图表
+    select30DaysNumber(days).then(x => {
+      this.setState({dayNumberList: x});
+      // 构造图表
+      this.tableMake();
+    });
+  }
+
+  // 获取数据 整理数据 构造图表
   tableMake() {
-    document.getElementById("tableBox").innerHTML="";
+    //清空图表div
+    document.getElementById("tableBox").innerHTML = "";
     const data = this.state.dayNumberList;
     let dataToShow = []; //定义数组存放整理后的
     data.forEach(item => {
@@ -71,26 +98,39 @@ class ShowNumberBox extends PureComponent {
         formatter: x => x + '次',
       },
     });
+    numberChart.axis("访问量", {
+      offset: 60,
+      title: "访问量",
+      // 设置标题的文本样式
+      textStyle: {
+        textAlign: 'left', // 文本对齐方向，可取值为： start middle end
+        rotate: 0, // 文本旋转角度，以角度为单位，仅当 autoRotate 为 false 时生效
+        fill: 'black', // 文本的颜色
+      },
+      position: 'end'
+    });
     this.setState({numberChart: numberChart});
-    console.log("tableMake被调用");
+    numberChart.point().position('日期*访问量').shape('circle').size(4).style({
+      stroke: '#fffafe',
+      lineWidth: 2,
+      fillOpacity: 4
+    });
     numberChart.line().position('日期*访问量').size(2);
     numberChart.render();
   }
 
-  render() {
-    const {ZoneNumber, dayNumberList, pageTitle} = this.state;
-    // const {
-    //   rule: {visitNumber},
-    //   loading,
-    // } = this.props;
-    // console.log(visitNumber);
-    console.log("ZoneNumber:" + ZoneNumber);
-    console.log(this.state);
-    return (
 
+  render() {
+    console.log("调用render()进行渲染");
+    const {ZoneNumber, pageTitle} = this.state;
+    return (
       <PageHeaderWrapper title={pageTitle}>
         <Card bordered={false}>
           <div>
+            <h3>总访问量:{ZoneNumber}</h3>
+            <hr/>
+            <label>统计天数:</label>
+            <InputNumber type={"number"} className={styles.MyInput} name={"days"} onChange={() => this.inputchanger()} placeholder={30}/>
             <button className={styles.MyBtn} onClick={() => this.tableMake()}>this.tableMake()</button>
             <div id="tableBox"></div>
           </div>
