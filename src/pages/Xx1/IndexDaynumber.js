@@ -4,6 +4,7 @@ import moment from 'moment';
 import {Card, Form, message, InputNumber,} from 'antd';
 import styles from './IndexDaynumber.less';
 import G2 from '@antv/g2';
+import $ from  'jquery'
 // import G2 from '@antv/g2/build/g2';
 import {select30DaysNumber, selectZoneNumber} from "../../services/api";
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
@@ -56,7 +57,7 @@ class ShowNumberBox extends PureComponent {
   //当输入框值改变时调用
   inputchanger() {
     // 从输入框获取 days
-    let days = document.getElementsByName("days")[0].value;
+    let days = $("input[name='days']").val();
     console.log(days);
     this.setState({days: days});
     // 查询 state.days 天数内的访问量列表 更新state 构造图表
@@ -70,7 +71,7 @@ class ShowNumberBox extends PureComponent {
   // 获取数据 整理数据 构造图表
   tableMake() {
     //清空图表div
-    document.getElementById("tableBox").innerHTML = "";
+    $("#tableBox").empty();
     const data = this.state.dayNumberList;
     let dataToShow = []; //定义数组存放整理后的
     data.forEach(item => {
