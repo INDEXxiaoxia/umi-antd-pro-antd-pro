@@ -6,10 +6,12 @@ export default {
   namespace: 'rule',
 
   state: {
+    MyData:null,
     data: {
       list: [],
       pagination: {},
     },
+    visitNumber:[],
   },
 
   effects: {
@@ -30,7 +32,16 @@ export default {
     *select30DaysNumber({ payload }, { call, put }) {
       const response = yield call(select30DaysNumber, payload);
       yield put({
-        type: 'save',
+        type: 'save1',
+        payload: response,
+      });
+      // return  response;
+
+    },
+    *selectZoneNumber({ payload }, { call, put }) {
+      const response = yield call(selectZoneNumber, payload);
+      yield put({
+        type: 'save1',
         payload: response,
       });
     },
@@ -65,6 +76,13 @@ export default {
       return {
         ...state,
         data: action.payload,
+      };
+    },
+
+    save1(state, action) {
+      return {
+        ...state,
+        visitNumber: action.payload,
       };
     },
   },

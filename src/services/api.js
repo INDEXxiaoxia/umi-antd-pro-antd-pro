@@ -40,8 +40,12 @@ export async function queryLqyjList(params) {
   return request(`http://127.0.0.1:10086/lqyj/selectAllLqyj`);
 }
 // get请求
-export async function select30DaysNumber(params) {
+export async function select30DaysNumber(days) {
   return request(`http://127.0.0.1:10086/index/select30DaysNumber`);
+}
+// 总访问量
+export async function selectZoneNumber() {
+  return request(`http://127.0.0.1:10086/index/selectZoneNumber`);
 }
 export async function updateRule(params = {}) {
   return request(`/api/rule?${stringify(params.query)}`, {

@@ -79,7 +79,7 @@ export default {
             name: 'IndexDaynumber',
           },
           {
-            path: 'https://www.indexxiaoxia.xyz/',
+            path: '/Xx1/HomePage',
             name: 'HomePage',
           },
         ],
